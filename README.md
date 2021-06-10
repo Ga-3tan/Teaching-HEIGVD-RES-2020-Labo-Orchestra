@@ -1,4 +1,4 @@
-# Teaching-HEIGVD-RES-2020-Labo-Orchestra
+#  Teaching-HEIGVD-RES-2020-Labo-Orchestra
 
 ## Admin
 
@@ -106,13 +106,13 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
 | | *Insert your diagram here...* |
 |Question | Who is going to **send UDP datagrams** and **when**? |
-| | *Enter your response here...* |
+| | Les containers musiciens vont envoyer leur uuid et le son de leur instrument toutes les secondes sur l'adresse multicast 239.255.22.5 |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
-| | *Enter your response here...* |
+| | L'auditeur va s'enregistres sur l'adrese multicast 239.255.22.5 et va écouter les datagrammes entrants |
 |Question | What **payload** should we put in the UDP datagrams? |
-| | *Enter your response here...* |
+| | L'uuid généré par le musicien à sa création et le son produit par son instrument |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | *Enter your response here...* |
+| | Les émetteurs (musiciens) envoient des données au format JSON, qui peuvent être parsées facilement par le récepteur (auditeur) qui va interpréter l'instrument en fonction du son reçu et créer un profil de musicien stocké dans une liste de musiciens. Si l'uuid reçu par l'auditeur existe déjà dans la liste de musiciens, alors l'auditeur va simplement mettre à jour la valeur du champ "activeSince" qui indique la dernière fois que le son de ce musicien a été entendu. |
 
 
 ## Task 2: implement a "musician" Node.js application
@@ -122,7 +122,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**? |
 | | *Enter your response here...*  |
 |Question | What is **npm**?  |
-| | *Enter your response here...*  |
+| | NPM est le Node Package Manager, c'est l'outil qui permet de gérer les packets et dépendances de NodeJS. Les dépendances sont indiquées dans le fichier package.json, de façon similaire au fichier pom.xml de l'outil Maven en Java. |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
 | | *Enter your response here...*  |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
