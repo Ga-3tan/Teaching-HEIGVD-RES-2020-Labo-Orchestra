@@ -120,21 +120,21 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**? |
-| | *Enter your response here...*  |
+| | L'objet JSON permet interagir avec les objets javascript. La fonction JSON.stringify() transforme un objet javascript en objet string contenant l'objet sous forme JSON. La fonction JSON.parse() fait l'inverse et transforme un objet String contenant le JSON en objet javascript. |
 |Question | What is **npm**?  |
 | | NPM est le Node Package Manager, c'est l'outil qui permet de gérer les packets et dépendances de NodeJS. Les dépendances sont indiquées dans le fichier package.json, de façon similaire au fichier pom.xml de l'outil Maven en Java. |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
-| | *Enter your response here...*  |
+| | La commande npm install va télécharger toutes les dépendances indiquées dans le fichier package.json dans un dossier node-modules. Cela permet ensuite d'utiliser ces dépendances dans le projet NodeJS. Le flag --save permet de sauvegarder les dépendences installées dans le fichier package.json lorsqu'un package est spécifié (`npm install <nomdupackage> --save`). |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
-| | *Enter your response here...*  |
+| | Ce site est une bibliothèpque de packages pouvant être installés dans un projet NodeJS. C'est l'équivalent du maven repository pour Java. Pour installer un packet il suffit de le rechercher puis de lancer la commande `npm install <nomdupackage> --save` dans le dossier du projet. |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
-| | *Enter your response here...*  |
+| | On peut utiliser le package uuid disponible à l'adresse https://www.npmjs.com/package/uuid. Ce package peut être installé via la commande `npm install uuid --save` |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | *Enter your response here...*  |
+| | Il est possible d'utiliser `setInterval(functon(){}, timeout);` pour lancer la fonction toutes les n millisecondes. |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
-| | *Enter your response here...*  |
+| | En créant un socket avec `dgram.createsocket('udp4')`, il est possible d'envoyer un datagramme en appelant `send(message, debut, taille, port, adresseMulticast, fonction)` sur ce socket. |
 |Question | In Node.js, how can we **access the command line arguments**? |
-| | *Enter your response here...*  |
+| | Grâce à l'objet process, il est possible de récupérer les arguments avec `process.argv[n]` |
 
 
 ## Task 3: package the "musician" app in a Docker image
