@@ -1,4 +1,4 @@
-# Teaching-HEIGVD-RES-2020-Labo-Orchestra
+#  Teaching-HEIGVD-RES-2020-Labo-Orchestra
 
 ## Admin
 
@@ -104,15 +104,15 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | --- | --- |
 |Question | How can we represent the system in an **architecture diagram**, which gives information both about the Docker containers, the communication protocols and the commands? |
-| | *Insert your diagram here...* |
+| | ![diagram](README/img/diagram.png) |
 |Question | Who is going to **send UDP datagrams** and **when**? |
-| | *Enter your response here...* |
+| | Les containers musiciens vont envoyer leur uuid et le son de leur instrument toutes les secondes sur l'adresse multicast 239.255.22.5 |
 |Question | Who is going to **listen for UDP datagrams** and what should happen when a datagram is received? |
-| | *Enter your response here...* |
+| | L'auditeur va s'enregistres sur l'adrese multicast 239.255.22.5 et va écouter les datagrammes entrants |
 |Question | What **payload** should we put in the UDP datagrams? |
-| | *Enter your response here...* |
+| | L'uuid généré par le musicien à sa création et le son produit par son instrument |
 |Question | What **data structures** do we need in the UDP sender and receiver? When will we update these data structures? When will we query these data structures? |
-| | *Enter your response here...* |
+| | Les émetteurs (musiciens) envoient des données au format JSON, qui peuvent être parsées facilement par le récepteur (auditeur) qui va interpréter l'instrument en fonction du son reçu et créer un profil de musicien stocké dans une liste de musiciens. Si l'uuid reçu par l'auditeur existe déjà dans la liste de musiciens, alors l'auditeur va simplement mettre à jour la valeur du champ "activeSince" qui indique la dernière fois que le son de ce musicien a été entendu. |
 
 
 ## Task 2: implement a "musician" Node.js application
@@ -120,21 +120,21 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | In a JavaScript program, if we have an object, how can we **serialize it in JSON**? |
-| | *Enter your response here...*  |
+| | L'objet JSON permet interagir avec les objets javascript. La fonction JSON.stringify() transforme un objet javascript en objet string contenant l'objet sous forme JSON. La fonction JSON.parse() fait l'inverse et transforme un objet String contenant le JSON en objet javascript. |
 |Question | What is **npm**?  |
-| | *Enter your response here...*  |
+| | NPM est le Node Package Manager, c'est l'outil qui permet de gérer les packets et dépendances de NodeJS. Les dépendances sont indiquées dans le fichier package.json, de façon similaire au fichier pom.xml de l'outil Maven en Java. |
 |Question | What is the `npm install` command and what is the purpose of the `--save` flag?  |
-| | *Enter your response here...*  |
+| | La commande npm install va télécharger toutes les dépendances indiquées dans le fichier package.json dans un dossier node-modules. Cela permet ensuite d'utiliser ces dépendances dans le projet NodeJS. Le flag --save permet de sauvegarder les dépendences installées dans le fichier package.json lorsqu'un package est spécifié (`npm install <nomdupackage> --save`). |
 |Question | How can we use the `https://www.npmjs.com/` web site?  |
-| | *Enter your response here...*  |
+| | Ce site est une bibliothèpque de packages pouvant être installés dans un projet NodeJS. C'est l'équivalent du maven repository pour Java. Pour installer un packet il suffit de le rechercher puis de lancer la commande `npm install <nomdupackage> --save` dans le dossier du projet. |
 |Question | In JavaScript, how can we **generate a UUID** compliant with RFC4122? |
-| | *Enter your response here...*  |
+| | On peut utiliser le package uuid disponible à l'adresse https://www.npmjs.com/package/uuid. Ce package peut être installé via la commande `npm install uuid --save` |
 |Question | In Node.js, how can we execute a function on a **periodic** basis? |
-| | *Enter your response here...*  |
+| | Il est possible d'utiliser `setInterval(functon(){}, timeout);` pour lancer la fonction toutes les n millisecondes. |
 |Question | In Node.js, how can we **emit UDP datagrams**? |
-| | *Enter your response here...*  |
+| | En créant un socket avec `dgram.createsocket('udp4')`, il est possible d'envoyer un datagramme en appelant `send(message, debut, taille, port, adresseMulticast, fonction)` sur ce socket. |
 |Question | In Node.js, how can we **access the command line arguments**? |
-| | *Enter your response here...*  |
+| | Grâce à l'objet process, il est possible de récupérer les arguments avec `process.argv[n]` |
 
 
 ## Task 3: package the "musician" app in a Docker image
@@ -142,17 +142,17 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we **define and build our own Docker image**?|
-| | *Enter your response here...*  |
+| | Il faut commencer par créer un fichier Dockerfile dans le dossier ou l'on veut build l'image. Il ne faut pas oublier d'ajouter les commandes `npm install` et `node /opt/app/auditor.js` ou encore la commande `COPY src /opt/app/` pour copier le contenu du dossier `src` dans le dossier `/opt/app/` de l'image. Il faut ensuite utiliser la commande `docker build -t res/musician .` dans le dossier ou se trouve le dockerfile pour build l'image qui pourra ensuite être lancée avec la commande `docker run -d --name pianist res/musician piano`. |
 |Question | How can we use the `ENTRYPOINT` statement in our Dockerfile?  |
-| | *Enter your response here...*  |
+| | La commande `ENTRYPOINT ["node", "/opt/app/musician.js"]` permet d'exécuter la commande `node /opt/app/musician.js` dans un container à sa création. Cete commande va lancer le fichier `musician.js` avec NodeJS. |
 |Question | After building our Docker image, how do we use it to **run containers**?  |
-| | *Enter your response here...*  |
+| | Avec la commande `docker run -d --name pianist res/musician piano` (on donne l'argument piano au programme NodeJS pour avoir un pianiste) |
 |Question | How do we get the list of all **running containers**?  |
-| | *Enter your response here...*  |
+| | Avec `docker ps` |
 |Question | How do we **stop/kill** one running container?  |
-| | *Enter your response here...*  |
+| | Obtenir le nom du container cible avec `docker ps`, puis le tuer avec `docker kill <nomContainer>` |
 |Question | How can we check that our running containers are effectively sending UDP datagrams?  |
-| | *Enter your response here...*  |
+| | Lancer un container `res/musician` sans l'option `-d` afin d'obtenir les sorties console du programme dans le container. Il suffit de faire un log des datagrammes envoyés. Et pour vérifier qu'il sont bien envoyés, lancer un container `res/auditor` et lancer une connexion tcp dessus, les musiciens détectés devront alors être affichés dans le retour JSON. |
 
 
 ## Task 4: implement an "auditor" Node.js application
@@ -160,15 +160,15 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | ---  |
 |Question | With Node.js, how can we listen for UDP datagrams in a multicast group? |
-| | *Enter your response here...*  |
+| | Il faut utiliser la dépendance `dgram`. Il faut créer un socket avec la fonction `createSocket()`, puis sur ce socket, il faut utiliser la fonction `bind()` pour ajouter le socket sur l'écoute de l'adresse multicast et le port spécifié avec la fonction `addMembership()`. |
 |Question | How can we use the `Map` built-in object introduced in ECMAScript 6 to implement a **dictionary**?  |
-| | *Enter your response here...* |
+| | Un objet map peut être utilisé pour associer les instruments aux sons qu'ils produisent. Une `Map` est créée avec l'instruction `const myMap = new Map()` puis des éléments peuvent être ajoutés avec `myMap.set('piano', 'ti-ta-ti')`. |
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
-| | *Enter your response here...* |
+| | Il faut l'ajouter aux dépendances avec `npm install moment --save`, puis dans le code on peut l'importer avec `const moment = require('moment')` pour finalement obtenir une date au format ISO avec `moment().toISOString()` |
 |Question | When and how do we **get rid of inactive players**?  |
-| | *Enter your response here...* |
+| | Chaque musicien possède un compteur incrémenté chaque seconde et il est mis à 0 lorsqu'un datagramme venant de ce musicien est reçu. Lorsque ce compteur arrive à 5, une fonction apellée par intervalles réguliers va supprimer le musicien associé car cela indiquera qu'il n'est plus actif. |
 |Question | How do I implement a **simple TCP server** in Node.js?  |
-| | *Enter your response here...* |
+| | Avec le module `net` il est possible de créer un serveur TCP avec la fonction `createServer()`. Une fonction de callback est créée et sera apelée à chaque connexion d'un client. On peut donc renvoyer le JSON des musiciens actifs dans cette fonction. |
 
 
 ## Task 5: package the "auditor" app in a Docker image
@@ -176,7 +176,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 | #  | Topic |
 | ---  | --- |
 |Question | How do we validate that the whole system works, once we have built our Docker image? |
-| | *Enter your response here...* |
+| | Manuellement, il faut créer plusieurs containers musiciens avec des instruments différents et un container auditor. Il faut ensuite se connecter en TCP a cet auditor. Un JSON contenant les musiciens en activité devrait être reçu. Supprimer ensutie un musicien et relancer une connexion TCP après 5 secondes. Le musicien supprimé ne devrait plus être dans la liste. Le script de validation du laboratoire peut aussi être utilisé pour vérifier que les tests passent. |
 
 
 ## Constraints
