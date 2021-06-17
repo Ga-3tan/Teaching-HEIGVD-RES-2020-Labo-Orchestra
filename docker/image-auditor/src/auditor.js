@@ -1,52 +1,54 @@
 
-const instruments = {
-  'ti-ta-ti'  : "piano",
-  'pouet'     : "trumpet",
-  'trulu'     : "flute",
-  'gzi-gzi'   : "violin",
-  'boum-boum' : "drum",
-}
-
 const dgram = require('dgram');
 const net = require('net');
-const uuid = require('uuid');
+const moment = require('moment');
 
-const PORTOCOL_PORT = 9907;
-const PROTOCOL_MULTICAST_ADDRESS = "239.255.22.5";
-
+const UDP_PORT = 9907;
+const MULTICAST_ADDRESS = "239.255.22.5";
 const TCP_PORT = 2205;
+
+const instSounds = new Map();
+instSounds.set('ti-ta-ti', 'piano');
+instSounds.set('pouet', 'trumpet');
+instSounds.set('trulu', 'flute');
+instSounds.set('gzi-gzi', 'violin');
+instSounds.set('boum-boum', 'drum');
 
 const socket = dgram.createSocket('udp4');
 
 var musicians = [];
 
 /* UDP server */
-socket.bind(PORTOCOL_PORT, function () {
+
+// binding port to multicast address
+socket.bind(UDP_PORT, function () {
   console.log("Listening musicians playing");
-  socket.addMembership(PROTOCOL_MULTICAST_ADDRESS);
+  socket.addMembership(MULTICAST_ADDRESS);
 });
 
+// each time data arrives on the UDP server
 socket.on('message', function(msg, source) {
   console.log("Data has arrived: " + msg + ". Source port: " + source.port);
 
   musician = JSON.parse(msg);
-  musicianIndex = musicians.findIndex(x => x.uuid === musician.uuid);
-
-  if (musicianIndex === -1) {             // new musician
-    musician.activeSince = new Date();
+  musicianIndex = musicians.findIndex(x => x.uuid === musician.uuid); // checks if musician already exists here
+  
+  if (musicianIndex === -1) { // new musician
+    console.log("added musician : " + musician.uuid);
+    musician.activeSince = moment().toISOString();
+    musician.instrument = instSounds.get(musician.sound);
     musician.notActiveSince = 0;
-    musicians.push(musician);
-  } else {                                // existing musician
-    musicians[musicianIndex].notActiveSince = 0;
+    musicians.push(musician);  
+  } else { // existing musician
+    musicians[musicianIndex].notActiveSince = 0; // musician heard, notActiveSince counter reseted
   }
-
 });
 
+// every second, increase the notActiveSince counter of all musicians
 setInterval(function() {
   musicians.forEach(function(musician, index, object) {
     musician.notActiveSince += 1;
-    console.log("not active musician : " + musician.uuid);
-    if (musician.notActiveSince > 5) {
+    if (musician.notActiveSince > 5) { // not heard for more than 5 secondes, remove musician
       console.log("removed musician : " + musician.uuid);
       object.splice(index, 1);
     }
@@ -67,4 +69,5 @@ var tcpServer = net.createServer(function(socket) {
   socket.write(JSON.stringify(musiciansPayload));
   socket.destroy();
 });
-tcpServer.listen(2205);
+
+tcpServer.listen(TCP_PORT);

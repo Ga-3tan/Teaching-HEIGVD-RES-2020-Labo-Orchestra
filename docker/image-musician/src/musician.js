@@ -1,43 +1,40 @@
 
-const instruments = {
-  piano   : "ti-ta-ti",
-  trumpet : "pouet",
-  flute   : "trulu",
-  violin  : "gzi-gzi",
-  drum    : "boum-boum",
+const uuid = require('uuid');
+const dgram = require('dgram');
+
+const UDP_PORT = 9907
+const MULTICAST_ADDRESS = "239.255.22.5";
+
+const socket = dgram.createSocket('udp4');
+
+const instSounds = new Map();
+instSounds.set('piano', 'ti-ta-ti');
+instSounds.set('trumpet', 'pouet');
+instSounds.set('flute', 'trulu');
+instSounds.set('violin', 'gzi-gzi');
+instSounds.set('drum', 'boum-boum');
+
+var instrument = process.argv[2];
+
+// if no instrument specified or wrong instrument name specified
+if (instrument == undefined || !instSounds.has(instrument)) {
+  instrument = 'piano'; // set piano as default instrument 
 }
 
-const uuid = require('uuid');
+function Musician() {
+  const musician = {
+    uuid : uuid.v4(),
+    sound : instSounds.get(instrument)
+  };
 
-const PROTOCOL_PORT = 9907
-const PROTOCOL_MULTICAST_ADDRESS = "239.255.22.5";
+  var buffer = new Buffer.from(JSON.stringify(musician), 'utf8');
 
-var dgram = require('dgram');
-var socket = dgram.createSocket('udp4');
-
-/* get creation date */
-var datetime = new Date();
-
-/* get instruments from parameters */
-var args = process.argv.slice(2);
-var sound = instruments[args[0]];
-var instrument = args[0];
-
-const musician = {
-  uuid : uuid.v4(),
-  instrument : instrument,
-};
-
-console.log(musician.stringify);
-
-function Musician(sound) {
-  var buffer = new Buffer(JSON.stringify(musician));
-  
+  // send data every seconds
   setInterval(function() {
-    socket.send(buffer, 0, buffer.length, PROTOCOL_PORT, PROTOCOL_MULTICAST_ADDRESS, function(err, bytes) {
-      console.log(musician.uuid + " is playing the " + musician.instrument + " via port " +  socket.address().port + " : " +  sound);
+    socket.send(buffer, 0, buffer.length, UDP_PORT, MULTICAST_ADDRESS, function(err, bytes) {
+      console.log(musician.uuid + " is playing the " + instrument + " via port " +  socket.address().port + " : " +  musician.sound);
     });
   }, 1000);
 }
 
-var m = new Musician(sound);
+var m = new Musician();
