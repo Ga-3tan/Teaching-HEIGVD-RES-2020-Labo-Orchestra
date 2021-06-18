@@ -166,7 +166,7 @@ When you connect to the TCP interface of the **Auditor**, you should receive an 
 |Question | How can we use the `Moment.js` npm module to help us with **date manipulations** and formatting?  |
 | | Il faut l'ajouter aux dépendances avec `npm install moment --save`, puis dans le code on peut l'importer avec `const moment = require('moment')` pour finalement obtenir une date au format ISO avec `moment().toISOString()` |
 |Question | When and how do we **get rid of inactive players**?  |
-| | Chaque musicien possède un compteur incrémenté chaque seconde et il est mis à 0 lorsqu'un datagramme venant de ce musicien est reçu. Lorsque ce compteur arrive à 5, une fonction apellée par intervalles réguliers va supprimer le musicien associé car cela indiquera qu'il n'est plus actif. |
+| | Chaque musicien possède un compteur incrémenté chaque seconde et il est mis à 0 lorsqu'un datagramme venant de ce musicien est reçu. Lorsque ce compteur dépasse 5, une fonction apellée par intervalles réguliers va supprimer le musicien associé car cela indiquera qu'il n'est plus actif. |
 |Question | How do I implement a **simple TCP server** in Node.js?  |
 | | Avec le module `net` il est possible de créer un serveur TCP avec la fonction `createServer()`. Une fonction de callback est créée et sera apelée à chaque connexion d'un client. On peut donc renvoyer le JSON des musiciens actifs dans cette fonction. |
 
